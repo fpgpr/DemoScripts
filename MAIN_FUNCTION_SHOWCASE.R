@@ -1,13 +1,10 @@
-#==================================
-#Getting the tree to use
-#==================================
+
 rm(list=ls())
 library(ape) 	#to use various phylo-related goodies
-library(car)	#to use Box-Cox transform
-library(geiger) #to use fitContinuous() to get λ
-library(moments)#to use kurtosis and skewness
 library(minqa)	#to use uobyqa for the quadratic approximation in optimization 
-	
+#==================================
+#Getting the tree to use
+#==================================	
 N = 128; 	#Number of extant taxa
 
 rr=22;
@@ -21,10 +18,6 @@ plot.phylo(RTree, show.tip.label=F)
 #dev.off();
 		
 source("Function_Collection_SHOWCASE.R"); #
-	
-
- 
-#1 also gives nice ICA vs PCA results.
 
 set.seed(rr);
 
@@ -46,14 +39,12 @@ thetas <-matrix(c(2.5, 0.75* max(cophenetic(tree)),.5,
                   1.5, 0.25*max(cophenetic(tree)),.5),	 
                ncol=3, byrow=TRUE) # matrix of thetas for all bumps
 
-#Set the seed here again, you might want to sample some nice decompositions.
-
 #==================================
 #Getting the tips signals to use
 #==================================
 #Generate the signals throughout the tree so we can use them for validation afterwards
 xbase <- generate.custom.tree_DecemberVariant (N= 128, tree=tree, ICA.func=PCA_cubica, bumps = sig.matrix, theta.matrix=thetas);
-#xbase <- generate.custom.tree_whole(N= 128, tree=tree, ICA.func=PCA_cubica, bumps = sig.matrix, theta.matrix=thetas) 
+
 XPLANE = seq(0,1,length.out=1024);
 
 #Generate the plot with the signals on their own so you can copy paste to the bigger file. 
@@ -83,19 +74,6 @@ x11();
 source("GettingTheIPCAFigure_SHOWCASE.R") #This might be slightly different than the one the paper
 #dev.off();
 
- 
- 
-if(1==1){
-
-#plot(mlbench.smiley(500, .1,0.05), xlim=c(-1.65,1.65))
-
-
-#==================================
-#Getting the Normality Plots of the Mixing Matrices
-#==================================
-
-#source("GettingTheNormalityPlots_SHOWCASE.R")
-
 #==================================
 #Getting the 3 subplots estimates fig.
 #==================================
@@ -117,11 +95,7 @@ if (Nthetas[3,1] < Nthetas[3,3]) { Nthetas[3,] = c(0.00001,1, sd( xbase$ICA_MM[3
 #Get Estimated Thetas
  Estimated_thetas = Nthetas; #These are the stuff that get feed in the estimates figure plotter!
 print((Nthetas-thetas)/thetas)
-#This script plots pdf stuff "inside" it.
+#This script plots pdf stuff "inside" it if uncommented.
 x11(); 
 source("GettingTheEstimatesFigure_SHOWCASE.R") 
- 
-
-}
-
 
