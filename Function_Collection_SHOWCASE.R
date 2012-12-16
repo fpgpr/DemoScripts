@@ -2,6 +2,8 @@
 #This work is only limited to cover the functions we use to produce the results in the paper
 source("ICA_functions_SHOWCASE.R")
 
+libray(MASS) #To get the generalized inverse
+
 one.custom.bump <- function(u, std, len){
     #generate a gaussian bump over 100 datapoints, padded to 200
     #defaults to random positioning
