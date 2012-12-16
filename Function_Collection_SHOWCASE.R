@@ -2,7 +2,7 @@
 #This work is only limited to cover the functions we use to produce the results in the paper
 source("ICA_functions_SHOWCASE.R")
 
-libray(MASS) #To get the generalized inverse
+library(MASS) #To get the generalized inverse
 
 one.custom.bump <- function(u, std, len){
     #generate a gaussian bump over 100 datapoints, padded to 200
@@ -22,9 +22,9 @@ custom.bumps <- function(means, sds, len){
 generate.custom.tree_DecemberVariant <- function(N, tree=tree,ICA.func=PCA_cubica, bumps = FALSE, theta.matrix,...){ 
     # This function is a chopped down version from the original generate.custom.tree written by David
     # It specifically uses a variant of the mixing matrix where you have noiseless correlation on the ancestral nodes
-    # Outputs an object containing the original tree of size N, the bumps, and thetas used,
-    # the "true/correct" mixing matrix of the sample, the mixing matrix given by ICA,
-    # the distance matrix between the nodes and tips, the ICA defined basis as well as the "TRUE signals" for all the tree.
+    # Outputs an object containing the original tree of size N (tree), the bumps (signals), thetas (Thetas) used,
+    # the "true/correct" mixing matrix of the sample (MM), the mixing matrix given by ICA (ICA_MM),
+    # the distance matrix between the nodes and tips (DM) and finally the IPCA defined basis (ICA_sig).
 
     DM <- dist.nodes(tree)      		#distance matrix between all nodes/tips in the tree
     MM <- get.mixing.matrix_NoAncNoise(theta.matrix, DM, num.bumps=ncol(bumps), whiten=FALSE)      #calls PhylogeneticNoise()
@@ -39,7 +39,6 @@ generate.custom.tree_DecemberVariant <- function(N, tree=tree,ICA.func=PCA_cubic
     ICA$MM <- t(ginv(ICA$y)) %*% as.matrix(signals)
 						#Mixing matrix given back by ICA
 
-    #Remove stuff so the different reps fit in memory: 
     list(bumps=bumps, tree=tree, DM=DM, Thetas=theta.matrix,
             MM=MM, signals=signals, mean.fun = mymeans, ICA_MM = ICA$MM, ICA_sig = ICA$y)
 }
@@ -70,7 +69,7 @@ make.some.noise_NotOnTheAnc <- function(theta, DM , whiten){
 PhylogeneticNoise_NotOnTheAnc <- function( Theta, X){ 
 #Theta: OU hyperparameters
 #X : Distance matrix
-# returns vector of phylogenetic related "variates"
+# returns vector of phylogenetic related "variates" with noise at the tips
     N = dim(X)[1]          #Number of tips  
     s_f = (  Theta[1]^2 )      #function's amplitude
     l =   (  Theta[2]   )     #characteristic lengh scale
@@ -81,11 +80,11 @@ PhylogeneticNoise_NotOnTheAnc <- function( Theta, X){
     K  <- matrix( rep(0, N^2) , ncol= N)
     for ( i in 1:N){
         for ( j in i:N){ 
-            K[i,j] <-  s_f * exp(-(abs( X[i,j] ))/(l)) # + s_c
+            K[i,j] <-  s_f * exp(-(abs( X[i,j] ))/(l)) 
         }
     }  
     K <- K + t(K)
-    K <- K + diag(N) * ( .000001 - s_f) #  -s_c		#correct the double sf dose on the diagonal
+    K <- K + diag(N) * ( .000001 - s_f) # 	#correct the double sf dose on the diagonal
     for (u in 1: ((N+1)*.5)){ K[u,u] = K[u,u]+s_n }
 
     VectorOfUncorrelatedRN <- rnorm(N); 		#newline
