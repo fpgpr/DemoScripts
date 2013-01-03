@@ -1,7 +1,7 @@
 [Function-Valued Traits in Evolution](http://arxiv.org/abs/1212.3730)
 =====================================================================
 
-Analysis and Demonstration Scripts (R)
+Analysis and demonstration scripts (R)
 ======================================
 
 ###Pantelis Z. Hadjipantelis, Nick S. Jones, John Moriarty, David A. Springate, Christopher G. Knight (Submitted on 15 Dec 2012)
